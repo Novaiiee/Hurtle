@@ -1,12 +1,4 @@
-import {
-	Column,
-	CreateDateColumn,
-	Entity,
-	JoinColumn,
-	ManyToOne,
-	PrimaryGeneratedColumn,
-	UpdateDateColumn
-} from "typeorm";
+import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { FlashCardSetEntity } from "./flash-card-set.entity";
 
 @Entity({ name: "flashcards" })

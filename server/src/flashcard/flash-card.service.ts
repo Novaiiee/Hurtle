@@ -1,12 +1,14 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { UserEntity } from "@users/entities/user.entity";
+import * as dayjs from "dayjs";
 import { Repository } from "typeorm";
 import { UsersService } from "../users/users.service";
 import { CreateFlashCardSetDto } from "./dto/create-flashcard-set.dto";
 import { CreateFlashCardDto } from "./dto/create-flashcard.dto";
 import { UpdateFlashCardSetDto } from "./dto/update-flashcard-set.dto";
 import { UpdateFlashCardDto } from "./dto/update-flashcard.dto";
+import { UpdateRepetitionDateDto } from "./dto/update-repitition-date.dto";
 import { FlashCardSetEntity } from "./entities/flash-card-set.entity";
 import { FlashCardEntity } from "./entities/flash-card.entity";
 
@@ -112,5 +114,19 @@ export class FlashCardService {
 		set.isPublic = updatedData.isPublic || set.isPublic;
 
 		await this.setRepository.save(set);
+	}
+
+	async updateRepetitionDate(data: UpdateRepetitionDateDto) {
+		const card = await this.cardRepository.findOne({
+			where: { id: data.id, parentSet: { id: data.setId } }
+		});
+
+		const date = new Date(data.lastPracticed);
+		const nextDate = dayjs(date).add(data.days, "days").toDate();
+
+		card.lastPracticedDate = date;
+		card.nextPracticedDate = nextDate;
+
+		await this.cardRepository.save(card);
 	}
 }
