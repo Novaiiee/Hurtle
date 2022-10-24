@@ -4,6 +4,9 @@ import { UserEntity } from "@users/entities/user.entity";
 import { Repository } from "typeorm";
 import { UsersService } from "../users/users.service";
 import { CreateFlashCardSetDto } from "./dto/create-flashcard-set.dto";
+import { CreateFlashCardDto } from "./dto/create-flashcard.dto";
+import { UpdateFlashCardSetDto } from "./dto/update-flashcard-set.dto";
+import { UpdateFlashCardDto } from "./dto/update-flashcard.dto";
 import { FlashCardSetEntity } from "./entities/flash-card-set.entity";
 import { FlashCardEntity } from "./entities/flash-card.entity";
 
@@ -16,11 +19,19 @@ export class FlashCardService {
 	) {}
 
 	async getMySets(user: UserEntity) {
-		const recentUserData = await this.userService.findOne(user.id);
+		const [sets, count] = await this.setRepository.findAndCount({
+			where: { creator: { id: user.id } },
+			relations: ["cards"]
+		});
+
 		return {
-			count: recentUserData.sets.length,
-			sets: recentUserData.sets
+			count,
+			sets
 		};
+	}
+
+	async getSetById(user: UserEntity, id: string) {
+		return this.setRepository.findOne({ where: { id, creator: { id: user.id } }, relations: ["cards"] });
 	}
 
 	async createFlashCardSet(user: UserEntity, body: CreateFlashCardSetDto) {
@@ -51,5 +62,55 @@ export class FlashCardService {
 
 		await this.userService.addUserSet(user, set);
 		return set;
+	}
+
+	async createFlashCard(creator: UserEntity, cardData: CreateFlashCardDto) {
+		const set = await this.setRepository.findOne({
+			where: { id: cardData.setId, creator: { id: creator.id } },
+			relations: ["cards"]
+		});
+
+		const newCard = this.cardRepository.create({
+			...cardData,
+			parentSet: set
+		});
+
+		set.cards = [...set.cards, newCard];
+
+		await this.cardRepository.save(newCard);
+		await this.setRepository.save(set);
+	}
+
+	async deleteFlashCard(setId: string, id: string) {
+		const card = await this.cardRepository.findOne({ where: { id, parentSet: { id: setId } } });
+		await this.cardRepository.remove(card);
+	}
+
+	async deleteFlashCardSet(creator: UserEntity, id: string) {
+		const set = await this.setRepository.findOne({ where: { id, creator: { id: creator.id } }, relations: ["cards"] });
+
+		await this.cardRepository.remove(set.cards);
+		await this.setRepository.remove(set);
+	}
+
+	async updateFlashCard(updatedData: UpdateFlashCardDto) {
+		const card = await this.cardRepository.findOne({
+			where: { id: updatedData.id, parentSet: { id: updatedData.setId } }
+		});
+
+		card.answer = updatedData.answer || card.answer;
+		card.question = updatedData.question || card.question;
+
+		await this.cardRepository.save(card);
+	}
+
+	async updateFlashCardSet(creator: UserEntity, updatedData: UpdateFlashCardSetDto) {
+		const set = await this.setRepository.findOne({ where: { id: updatedData.setId, creator: { id: creator.id } } });
+
+		set.title = updatedData.title || set.title;
+		set.description = updatedData.description || set.description;
+		set.isPublic = updatedData.isPublic || set.isPublic;
+
+		await this.setRepository.save(set);
 	}
 }

@@ -1,4 +1,5 @@
 import { IsArray, IsBoolean, IsString, MaxLength, MinLength, ValidateIf } from "class-validator";
+import { CreateFlashCardDto } from "./create-flashcard.dto";
 
 export class CreateFlashCardSetDto {
 	@MinLength(3, { message: "Title: Must be 4 characters long" })
@@ -10,16 +11,8 @@ export class CreateFlashCardSetDto {
 	description: string;
 
 	@IsArray({ message: "Flashcards: Must be an array of items" })
-	flashCards: FlashCardDto[];
+	flashCards: CreateFlashCardDto[];
 
 	@IsBoolean({ message: "IsPublic: Must be a booleaen" })
 	isPublic: boolean;
-}
-
-export class FlashCardDto {
-	@MinLength(2, { message: "Question: Must be 3 characters long" })
-	question: string;
-
-	@MinLength(2, { message: "Question: Must be 3 characters long" })
-	answer: string;
 }
