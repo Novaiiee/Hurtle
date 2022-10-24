@@ -1,5 +1,6 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post, Query, Req, UseGuards } from "@nestjs/common";
 import { AuthGuard } from "@nestjs/passport";
+import { ApiTags } from "@nestjs/swagger";
 import { CreateFlashCardSetDto } from "./dto/create-flashcard-set.dto";
 import { CreateFlashCardDto } from "./dto/create-flashcard.dto";
 import { UpdateFlashCardSetDto } from "./dto/update-flashcard-set.dto";
@@ -13,46 +14,55 @@ export class FlashCardController {
 	constructor(private readonly cardService: FlashCardService) {}
 
 	@Get()
+	@ApiTags("Flashcard Sets")
 	async getMySets(@Req() { user }) {
 		return this.cardService.getMySets(user);
 	}
 
 	@Get("/:id")
+	@ApiTags("Flashcard Sets")
 	async getSetById(@Req() { user }, @Param("id") id: string) {
 		return this.cardService.getSetById(user, id);
 	}
 
 	@Post("/set")
+	@ApiTags("Flashcard Sets")
 	async createFlashCardSet(@Req() { user }, @Body() body: CreateFlashCardSetDto) {
 		return await this.cardService.createFlashCardSet(user, body);
 	}
 
 	@Post()
+	@ApiTags("Flashcards")
 	async createFlashCard(@Req() { user }, @Body() cardData: CreateFlashCardDto) {
 		await this.cardService.createFlashCard(user, cardData);
 	}
 
 	@Delete("/set/:id")
+	@ApiTags("Flashcard Sets")
 	async deleteFlashCardSet(@Req() { user }, @Param("id") id: string) {
 		await this.cardService.deleteFlashCardSet(user, id);
 	}
 
 	@Delete()
+	@ApiTags("Flashcards")
 	async deleteFlashCard(@Query("id") id: string, @Query("setId") setId: string) {
 		await this.cardService.deleteFlashCard(setId, id);
 	}
 
 	@Patch()
+	@ApiTags("Flashcards")
 	async updateFlashCard(@Body() data: UpdateFlashCardDto) {
 		await this.cardService.updateFlashCard(data);
 	}
 
 	@Patch("/set")
+	@ApiTags("Flashcard Sets")
 	async updateFlashCardSet(@Req() { user }, @Body() data: UpdateFlashCardSetDto) {
 		await this.cardService.updateFlashCardSet(user, data);
 	}
 
 	@Patch("/repetition")
+	@ApiTags("Flashcards")
 	async updateRepetitionDate(@Body() data: UpdateRepetitionDateDto) {
 		await this.cardService.updateRepetitionDate(data);
 	}
