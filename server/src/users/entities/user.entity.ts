@@ -1,7 +1,8 @@
 import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { FlashCardSetEntity } from "../../flashcard/entities/flash-card-set.entity";
 import { AccountEntity } from "./account.entity";
 
-@Entity()
+@Entity({ name: "users" })
 export class UserEntity {
 	@PrimaryGeneratedColumn("uuid")
 	id: string;
@@ -14,6 +15,9 @@ export class UserEntity {
 
 	@OneToMany(() => AccountEntity, (acc) => acc.user)
 	accounts: AccountEntity[];
+
+	@OneToMany(() => FlashCardSetEntity, (set) => set.creator)
+	sets: FlashCardSetEntity[];
 
 	@CreateDateColumn()
 	createdAt: Date;

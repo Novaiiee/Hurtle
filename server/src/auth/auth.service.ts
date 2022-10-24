@@ -45,7 +45,8 @@ export class AuthService {
 				email,
 				id,
 				updatedAt,
-				username
+				username,
+				sets: []
 			}
 		};
 	}
@@ -60,6 +61,7 @@ export class AuthService {
 		const user = await this.usersService.create({
 			email: data.email,
 			username: data.username,
+			sets: [],
 			accounts: [
 				await this.usersService.createAccount({
 					email: data.email,

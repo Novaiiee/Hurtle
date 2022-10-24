@@ -20,7 +20,8 @@
     "paths": {
       "@users/*": ["src/users/*"],
       "@auth/*": ["src/auth/*"],
-      "@database/*": ["src/database/*"]
+      "@database/*": ["src/database/*"],
+      "@flashcard/*": ["src/flashcard/*"]
     }
   }
 }

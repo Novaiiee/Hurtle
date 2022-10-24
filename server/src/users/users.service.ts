@@ -1,6 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
+import { FlashCardSetEntity } from "../flashcard/entities/flash-card-set.entity";
 import { AccountEntity } from "./entities/account.entity";
 import { UserEntity } from "./entities/user.entity";
 
@@ -16,7 +17,7 @@ export class UsersService {
 			where: {
 				id
 			},
-			relations: ["accounts"]
+			relations: ["accounts", "sets"]
 		});
 	}
 
@@ -43,6 +44,11 @@ export class UsersService {
 		const user = await this.findOne(userId);
 		user.accounts = [...user.accounts, account];
 
+		return this.usersRepository.save(user);
+	}
+
+	async addUserSet(user: UserEntity, set: FlashCardSetEntity) {
+		user.sets = [set, ...user.sets];
 		return this.usersRepository.save(user);
 	}
 }

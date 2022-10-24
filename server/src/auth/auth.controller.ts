@@ -29,7 +29,9 @@ export class AuthController {
 
 	@Get("/google")
 	@UseGuards(AuthGuard("google"))
-	async googleAuth() { }
+	async googleAuth() {
+		/* */
+	}
 
 	@Get("/google/callback")
 	@UseGuards(AuthGuard("google"))
@@ -44,6 +46,7 @@ export class AuthController {
 			path: "/",
 			sameSite: false
 		});
+		console.log(token);
 
 		res.redirect(process.env.CLIENT_AUTH_REDIRECT + `?token=${token}`);
 	}
