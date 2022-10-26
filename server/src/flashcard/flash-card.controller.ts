@@ -5,7 +5,7 @@ import { CreateFlashCardSetDto } from "./dto/create-flashcard-set.dto";
 import { CreateFlashCardDto } from "./dto/create-flashcard.dto";
 import { UpdateFlashCardSetDto } from "./dto/update-flashcard-set.dto";
 import { UpdateFlashCardDto } from "./dto/update-flashcard.dto";
-import { UpdateRepetitionDateDto } from "./dto/update-repitition-date.dto";
+import { UpdateRepetitionDateDto } from "./dto/update-repetition-date.dto";
 import { FlashCardService } from "./flash-card.service";
 
 @Controller("cards")

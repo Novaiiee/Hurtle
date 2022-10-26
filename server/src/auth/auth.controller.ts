@@ -1,4 +1,5 @@
 import { Body, Controller, Get, Post, Req, Res, UseGuards } from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
 import { AuthGuard } from "@nestjs/passport";
 import { ApiTags } from "@nestjs/swagger";
 import { Request, Response } from "express";
@@ -10,7 +11,7 @@ import { LoginResult } from "./types";
 @Controller("auth")
 @ApiTags("Authentication")
 export class AuthController {
-	constructor(private readonly authService: AuthService) {}
+	constructor(private readonly authService: AuthService, private readonly configService: ConfigService) {}
 
 	@UseGuards(AuthGuard("local"))
 	@Post("/login")
@@ -44,12 +45,12 @@ export class AuthController {
 		};
 
 		res.cookie("session", token, {
-			domain: process.env.CLIENT_DOMAIN,
+			domain: this.configService.get("CLIENT_DOMAIN"),
 			path: "/",
 			sameSite: false
 		});
 		console.log(token);
 
-		res.redirect(process.env.CLIENT_AUTH_REDIRECT + `?token=${token}`);
+		res.redirect(this.configService.get("CLIENT_AUTH_REDIRECT") + `?token=${token}`);
 	}
 }

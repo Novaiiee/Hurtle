@@ -22,8 +22,10 @@ export class AccountEntity {
 	user: UserEntity;
 
 	@CreateDateColumn()
+	@Exclude()
 	createdAt: Date;
 
 	@UpdateDateColumn()
+	@Exclude()
 	updatedAt: Date;
 }

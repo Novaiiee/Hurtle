@@ -8,7 +8,7 @@ import { TypeOrmModule } from "@nestjs/typeorm";
 			useFactory: (config: ConfigService) => ({
 				type: "postgres",
 				url: config.get("DATABASE_CONNECTION"),
-				synchronize: process.env.NODE_ENV === "production" ? false : true,
+				synchronize: config.get("NODE_ENV") === "production" ? false : true,
 				autoLoadEntities: true,
 				extra: {
 					ssl: {

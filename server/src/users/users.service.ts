@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { HttpException, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { FlashCardSetEntity } from "../flashcard/entities/flash-card-set.entity";
@@ -29,26 +29,42 @@ export class UsersService {
 	}
 
 	async create(data: Omit<Partial<UserEntity>, "createdAt" | "updatedAt">) {
-		const user = this.usersRepository.create({ ...data });
-		return this.usersRepository.save(user);
+		try {
+			const user = this.usersRepository.create({ ...data });
+			return this.usersRepository.save(user);
+		} catch (error) {
+			throw new HttpException(error.message, 500);
+		}
 	}
 
 	async createAccount(details: Omit<Partial<AccountEntity>, "createdAt" | "updatedAt">) {
-		const account = this.accountsRepository.create({ ...details });
-		await this.accountsRepository.save(account);
+		try {
+			const account = this.accountsRepository.create({ ...details });
+			await this.accountsRepository.save(account);
 
-		return account;
+			return account;
+		} catch (error) {
+			throw new HttpException(error.message, 500);
+		}
 	}
 
 	async addAccount(account: AccountEntity, userId: string) {
-		const user = await this.findOne(userId);
-		user.accounts = [...user.accounts, account];
+		try {
+			const user = await this.findOne(userId);
+			user.accounts = [...user.accounts, account];
 
-		return this.usersRepository.save(user);
+			return this.usersRepository.save(user);
+		} catch (error) {
+			throw new HttpException(error.message, 500);
+		}
 	}
 
 	async addUserSet(user: UserEntity, set: FlashCardSetEntity) {
-		user.sets = [set, ...user.sets];
-		return this.usersRepository.save(user);
+		try {
+			user.sets = [set, ...user.sets];
+			return this.usersRepository.save(user);
+		} catch (error) {
+			throw new HttpException(error.message, 500);
+		}
 	}
 }

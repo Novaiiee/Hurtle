@@ -1,3 +1,4 @@
+import { Exclude } from "class-transformer";
 import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { FlashCardSetEntity } from "../../flashcard/entities/flash-card-set.entity";
 import { AccountEntity } from "./account.entity";
@@ -20,8 +21,10 @@ export class UserEntity {
 	sets: FlashCardSetEntity[];
 
 	@CreateDateColumn()
+	@Exclude()
 	createdAt: Date;
 
 	@UpdateDateColumn()
+	@Exclude()
 	updatedAt: Date;
 }
