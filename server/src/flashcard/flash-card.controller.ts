@@ -16,7 +16,7 @@ export class FlashCardController {
 	@Get()
 	@ApiTags("Flashcard Sets")
 	async getMySets(@Req() { user }) {
-		return this.cardService.getMySets(user);
+		return this.cardService.getMySets(user.id);
 	}
 
 	@Get("/:id")

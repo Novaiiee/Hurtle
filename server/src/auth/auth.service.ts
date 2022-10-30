@@ -55,7 +55,7 @@ export class AuthService {
 		const finder = await this.findByIdentifier(data.email, data.username);
 
 		if (finder.exists) {
-			throw new UnauthorizedException("User already exists");
+			throw new UnauthorizedException(`User already exists by ${finder.type}`);
 		}
 
 		const user = await this.usersService.create({
@@ -85,20 +85,22 @@ export class AuthService {
 	}
 
 	async findByIdentifier(email: string, username: string) {
-		let doesUserExist = await this.usersService.findByIdentifier(email);
+		let user = await this.usersService.findByIdentifier(email);
 
-		if (doesUserExist)
+		if (user)
 			return {
-				user: doesUserExist,
-				exists: true
+				user,
+				exists: true,
+				type: "email"
 			};
 
-		doesUserExist = await this.usersService.findByIdentifier(username);
+		user = await this.usersService.findByIdentifier(username);
 
-		if (doesUserExist)
+		if (user)
 			return {
-				user: doesUserExist,
-				exists: true
+				user,
+				exists: true,
+				type: "username"
 			};
 
 		return {

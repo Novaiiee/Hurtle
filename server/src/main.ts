@@ -15,7 +15,7 @@ async function bootstrap() {
 	app.use(cookieParser());
 	app.use(helmet());
 	app.enableCors();
-	app.useGlobalPipes(new ValidationPipe());
+	app.useGlobalPipes(new ValidationPipe({ transform: true }));
 	app.useGlobalFilters(new GlobalExceptionFilter());
 	app.useGlobalInterceptors(new GlobalTransformInterceptor());
 

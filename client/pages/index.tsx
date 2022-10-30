@@ -1,22 +1,48 @@
-import { Stack, Text } from "@mantine/core";
-import FlashCardSet from "../components/flashcards/FlashCardSet";
+import { Group, Paper, Stack, Text, Title } from "@mantine/core";
+import { GetServerSideProps } from "next";
+import Head from "next/head";
 
-export default function Home() {
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const session = context.req.cookies.session;
+
+  if (session) {
+    return {
+      props: {},
+      redirect: {
+        destination: "/dashboard",
+      },
+    };
+  }
+
+  return {
+    props: {},
+  };
+};
+
+export default function index() {
   return (
     <>
-      <Text weight="600" size="xl">
-        Welcome Back Toheeb
-      </Text>
-      <Stack py="lg">
-        <Text>Your Sets</Text>
-        <Stack>
-          <FlashCardSet
-            id="1"
-            title="Grade 10 Science Project"
-            isPublic
-            description="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
-          />
-        </Stack>
+      <Head>
+        <title>Hurtle</title>
+      </Head>
+      <Stack>
+        <Paper
+          shadow="sm"
+          p="xl"
+          sx={(theme) => ({
+            backgroundColor: theme.colors.blue,
+            width: "100%",
+          })}
+        >
+          <Group align="center" position="center">
+            <Stack align="center">
+              <Title sx={{ color: "white" }}>Hurtle</Title>
+              <Text sx={{ color: "white" }}>
+                A flashcard application for students
+              </Text>
+            </Stack>
+          </Group>
+        </Paper>
       </Stack>
     </>
   );

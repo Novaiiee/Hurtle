@@ -16,24 +16,27 @@ import { useState } from "react";
 import BottomError from "../../components/auth/BottomError";
 import { Errors } from "../../lib/types";
 
-interface LoginValues {
-  identifier: string;
+interface RegisterValues {
+  username: string;
+  email: string;
   password: string;
 }
 
-export default function Login() {
-  const router = useRouter();
-  const [errors, setErrors] = useState<
-    Errors<"provider" | "identifier" | "password">
-  >({
-    provider: null,
-    identifier: null,
-    password: null,
-  });
+const isEmail = (str: string) => /^\S+@\S+$/.test(str);
 
-  const form = useForm<LoginValues>({
+export default function Register() {
+  const router = useRouter();
+  const [errors, setErrors] = useState<Errors<"emailExists" | "usernameExists">>(
+    {
+      emailExists: null,
+      usernameExists: null,
+    }
+  );
+
+  const form = useForm<RegisterValues>({
     validate: {
-      identifier: (value: string) => (value === "" ? "Required*" : null),
+      email: (value: string) => (isEmail(value) ? null : "Not an email"),
+      username: (value: string) => (value === "" ? "Required*" : null),
       password: (value: string) =>
         value === ""
           ? "Required*"
@@ -42,15 +45,16 @@ export default function Login() {
           : null,
     },
     initialValues: {
-      identifier: "",
+      username: "",
+      email: "",
       password: "",
     },
   });
 
-  const onSubmit = async (values: LoginValues) => {
+  const onSubmit = async (values: RegisterValues) => {
     try {
       const res = await axios.post(
-        process.env.NEXT_PUBLIC_SERVER_URL + "/auth/login",
+        process.env.NEXT_PUBLIC_SERVER_URL + "/auth/register",
         values
       );
 
@@ -60,23 +64,15 @@ export default function Login() {
       if (err instanceof AxiosError && err.response) {
         const error = err.response.data.data.errors;
 
-        if (error === "Password is Invalid") {
+        if (error === "User already exists by username") {
           setErrors(() => ({
-            password: "Invalid Password",
-            identifier: null,
-            provider: null,
+            usernameExists: "Username taken",
+            emailExists: null,
           }));
-        } else if (error === "User not found") {
+        } else if (error === "User already exists by email") {
           setErrors(() => ({
-            password: null,
-            identifier: "User not found",
-            provider: null,
-          }));
-        } else if (error === "Sign in with a different provider") {
-          setErrors(() => ({
-            password: null,
-            identifier: null,
-            provider: "Try logging in with Google",
+            usernameExists: null,
+            emailExists: "Email used by another account",
           }));
         }
       }
@@ -86,12 +82,12 @@ export default function Login() {
   return (
     <>
       <Head>
-        <title>Login | Hurtle</title>
+        <title>Register | Hurtle</title>
       </Head>
       <Box mx="auto">
         <Stack>
           <Text size="xl" weight="600">
-            Login
+            Register
           </Text>
           <form onSubmit={form.onSubmit(onSubmit)}>
             <Stack spacing="lg">
@@ -105,17 +101,21 @@ export default function Login() {
                     src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Google_%22G%22_Logo.svg/1200px-Google_%22G%22_Logo.svg.png"
                     height={20}
                   />
-                  <Text>Login with Google</Text>
+                  <Text>Register with Google</Text>
                 </Group>
               </Button>
-
               <TextInput
                 withAsterisk
-                label="Email or Username"
+                label="Email"
                 placeholder=""
-                {...form.getInputProps("identifier")}
+                {...form.getInputProps("email")}
               />
-
+              <TextInput
+                withAsterisk
+                label="Username"
+                placeholder=""
+                {...form.getInputProps("username")}
+              />
               <TextInput
                 withAsterisk
                 label="Password"
@@ -125,13 +125,14 @@ export default function Login() {
             </Stack>
             <Group mt="md">
               <Button type="submit">Submit</Button>
-              <Anchor component={Link} href="/auth/register">
-                {"Don't have an account? Register"}
+              <Anchor component={Link} href="/auth/login">
+                {"Already have an account? Login"}
               </Anchor>
             </Group>
-            {errors.identifier && <BottomError message={errors.identifier} />}
-            {errors.password && <BottomError message={errors.password} />}
-            {errors.provider && <BottomError message={errors.provider} />}
+            {errors.emailExists && <BottomError message={errors.emailExists} />}
+            {errors.usernameExists && (
+              <BottomError message={errors.usernameExists} />
+            )}
           </form>
         </Stack>
       </Box>

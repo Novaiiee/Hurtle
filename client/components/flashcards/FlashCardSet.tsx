@@ -1,9 +1,10 @@
 import { ActionIcon, Button, Group, Paper, Stack, Text, Title } from "@mantine/core";
 import type { FC } from "react";
 import { Edit2 } from "react-feather";
+
 interface FlashCardSetProps {
   title: string;
-  description: string;
+  description?: string;
   isPublic: boolean;
   id: string;
 }
@@ -24,7 +25,7 @@ const FlashCardSet: FC<FlashCardSetProps> = ({
           </ActionIcon>
           <Button variant="outline">Open Set</Button>
         </Group>
-        <Text>{description.substring(0, 175).trim() + "..."}</Text>
+        <Text>{description?.substring(0, 175).trim() + "..."}</Text>
       </Stack>
     </Paper>
   );

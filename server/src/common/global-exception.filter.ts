@@ -16,7 +16,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
 			timestamp: `${date.toLocaleDateString()} at ${date.toLocaleTimeString()}`,
 			path: request.url,
 			data: {
-				errors: [exception.message]
+				errors: (exception.getResponse() as any).message
 			}
 		});
 	}

@@ -9,9 +9,24 @@ import {
   Stack,
   Text,
 } from "@mantine/core";
+import { useQuery } from "@tanstack/react-query";
+import Cookies from "js-cookie";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import { GitHub } from "react-feather";
+import { fetchUser } from "../lib/query/fetchers";
+
 export default function Layout({ children }: any) {
+  const router = useRouter();
+  const { data: user } = useQuery(["user"], () => fetchUser(), {
+    enabled: false,
+  });
+
+  const onLogout = () => {
+    Cookies.remove("session");
+    router.push("/api/auth/logout");
+  }
+
   return (
     <AppShell
       padding="xl"
@@ -22,15 +37,31 @@ export default function Layout({ children }: any) {
           >
             <Group position="apart" style={{ width: "100%" }}>
               <>
-                <Text weight="600"href="/" component={Link}>Hurtle</Text>
+                <Text weight="600" href="/" component={Link}>
+                  Hurtle
+                </Text>
               </>
               <Group>
-                <Button variant="light" component={Link} href="/auth/login">
-                  Login
-                </Button>
-                <Button variant="subtle" component={Link} href="/auth/signup">
-                  Or Sign Up
-                </Button>
+                {user ? (
+                  <>
+                    <Button variant="light" onClick={onLogout}>
+                      Logout
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    <Button variant="light" component={Link} href="/auth/login">
+                      Login
+                    </Button>
+                    <Button
+                      variant="subtle"
+                      component={Link}
+                      href="/auth/register"
+                    >
+                      Or Sign Up
+                    </Button>
+                  </>
+                )}
               </Group>
             </Group>
           </Container>
