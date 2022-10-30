@@ -17,11 +17,13 @@
     "strictBindCallApply": false,
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false,
+    "resolveJsonModule": true,
     "paths": {
       "@users/*": ["src/users/*"],
       "@auth/*": ["src/auth/*"],
       "@database/*": ["src/database/*"],
-      "@flashcard/*": ["src/flashcard/*"]
+      "@flashcard/*": ["src/flashcard/*"],
+      "@tests/*": ["test/*"]
     }
   }
 }

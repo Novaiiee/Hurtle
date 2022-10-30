@@ -20,10 +20,10 @@ export class FlashCardService {
 		private readonly userService: UsersService
 	) {}
 
-	async getMySets(user: UserEntity) {
+	async getMySets(userId: string) {
 		try {
 			const [sets, count] = await this.setRepository.findAndCount({
-				where: { creator: { id: user.id } },
+				where: { creator: { id: userId } },
 				relations: ["cards"]
 			});
 
@@ -36,8 +36,8 @@ export class FlashCardService {
 		}
 	}
 
-	async getSetById(user: UserEntity, id: string) {
-		return this.setRepository.findOne({ where: { id, creator: { id: user.id } }, relations: ["cards"] });
+	async getSetById(userId: string, id: string) {
+		return this.setRepository.findOne({ where: { id, creator: { id: userId } }, relations: ["cards"] });
 	}
 
 	async createFlashCardSet(user: UserEntity, body: CreateFlashCardSetDto) {
@@ -74,10 +74,10 @@ export class FlashCardService {
 		}
 	}
 
-	async createFlashCard(creator: UserEntity, cardData: CreateFlashCardDto) {
+	async createFlashCard(userId: string, cardData: CreateFlashCardDto) {
 		try {
 			const set = await this.setRepository.findOne({
-				where: { id: cardData.setId, creator: { id: creator.id } },
+				where: { id: cardData.setId, creator: { id: userId } },
 				relations: ["cards"]
 			});
 
@@ -104,10 +104,10 @@ export class FlashCardService {
 		}
 	}
 
-	async deleteFlashCardSet(creator: UserEntity, id: string) {
+	async deleteFlashCardSet(userId: string, id: string) {
 		try {
 			const set = await this.setRepository.findOne({
-				where: { id, creator: { id: creator.id } },
+				where: { id, creator: { id: userId } },
 				relations: ["cards"]
 			});
 
@@ -133,9 +133,14 @@ export class FlashCardService {
 		}
 	}
 
-	async updateFlashCardSet(creator: UserEntity, updatedData: UpdateFlashCardSetDto) {
+	async updateFlashCardSet(userId: string, updatedData: UpdateFlashCardSetDto) {
 		try {
-			const set = await this.setRepository.findOne({ where: { id: updatedData.setId, creator: { id: creator.id } } });
+			const set = await this.setRepository.findOne({
+				where: {
+					id: updatedData.setId,
+					creator: { id: userId }
+				}
+			});
 
 			set.title = updatedData.title || set.title;
 			set.description = updatedData.description || set.description;

@@ -22,7 +22,7 @@ export class FlashCardController {
 	@Get("/:id")
 	@ApiTags("Flashcard Sets")
 	async getSetById(@Req() { user }, @Param("id") id: string) {
-		return this.cardService.getSetById(user, id);
+		return this.cardService.getSetById(user.id, id);
 	}
 
 	@Post("/set")
@@ -34,13 +34,13 @@ export class FlashCardController {
 	@Post()
 	@ApiTags("Flashcards")
 	async createFlashCard(@Req() { user }, @Body() cardData: CreateFlashCardDto) {
-		await this.cardService.createFlashCard(user, cardData);
+		await this.cardService.createFlashCard(user.id, cardData);
 	}
 
 	@Delete("/set/:id")
 	@ApiTags("Flashcard Sets")
 	async deleteFlashCardSet(@Req() { user }, @Param("id") id: string) {
-		await this.cardService.deleteFlashCardSet(user, id);
+		await this.cardService.deleteFlashCardSet(user.id, id);
 	}
 
 	@Delete()
@@ -58,7 +58,7 @@ export class FlashCardController {
 	@Patch("/set")
 	@ApiTags("Flashcard Sets")
 	async updateFlashCardSet(@Req() { user }, @Body() data: UpdateFlashCardSetDto) {
-		await this.cardService.updateFlashCardSet(user, data);
+		await this.cardService.updateFlashCardSet(user.id, data);
 	}
 
 	@Patch("/repetition")
